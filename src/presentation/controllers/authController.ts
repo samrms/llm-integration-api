@@ -80,7 +80,6 @@ export function createAuthController(deps: AuthControllerDeps) {
 
       const result = await deps.refreshTokenUseCase.execute({
         refreshToken: body.refreshToken,
-        userId: request.userId!,
       })
 
       reply.send({

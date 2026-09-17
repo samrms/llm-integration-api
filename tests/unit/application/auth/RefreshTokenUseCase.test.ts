@@ -67,7 +67,7 @@ describe('RefreshTokenUseCase', () => {
   it('revokes old token and creates new one in same family', async () => {
     const { user, refreshToken, family } = await setupUserWithRefreshToken()
 
-    await useCase.execute({ refreshToken, userId: user.id })
+    await useCase.execute({ refreshToken })
 
     // Old token should be revoked
     const oldHash = await tokenService.hashToken(refreshToken)
@@ -96,11 +96,11 @@ describe('RefreshTokenUseCase', () => {
     const { user, refreshToken, family } = await setupUserWithRefreshToken()
 
     // First use: rotate successfully
-    await useCase.execute({ refreshToken, userId: user.id })
+    await useCase.execute({ refreshToken })
 
     // Second use with original (already revoked): reuse detected
     await expect(
-      useCase.execute({ refreshToken, userId: user.id }),
+      useCase.execute({ refreshToken }),
     ).rejects.toThrow('Refresh token reuse detected')
 
     // All tokens in family should now be revoked
@@ -118,7 +118,7 @@ describe('RefreshTokenUseCase', () => {
     )
 
     await expect(
-      useCase.execute({ refreshToken, userId: user.id }),
+      useCase.execute({ refreshToken }),
     ).rejects.toThrow('Refresh token expired')
   })
 
@@ -128,7 +128,7 @@ describe('RefreshTokenUseCase', () => {
       -1,
     )
 
-    await useCase.execute({ refreshToken, userId: user.id }).catch(() => {})
+    await useCase.execute({ refreshToken }).catch(() => {})
 
     const record = await refreshTokenRepo.findByTokenHash(tokenHash)
     expect(record).not.toBeNull()
@@ -159,7 +159,7 @@ describe('RefreshTokenUseCase', () => {
     await userRepo.delete(user.id)
 
     await expect(
-      useCase.execute({ refreshToken, userId: user.id }),
+      useCase.execute({ refreshToken }),
     ).rejects.toThrow('User not found')
   })
 })

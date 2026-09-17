@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { FastifyInstance } from 'fastify'
 import "@fastify/swagger";
 import { createConversationController } from '../controllers/conversationController.js'
@@ -40,13 +41,7 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
         body: createConversationRequest,
         tags: ['conversations'],
         summary: 'Create a conversation',
@@ -61,20 +56,8 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
-        querystring: {
-          type: 'object',
-          properties: {
-            limit: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
-            cursor: { type: 'string' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
+        querystring: z.object({limit: z.coerce.number().int().min(1).max(100).default(20), cursor: z.string().uuid().optional()}),
         tags: ['conversations'],
         summary: 'List conversations',
         security: [{ bearerAuth: [] }],
@@ -88,14 +71,7 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'id'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), id: z.string().uuid()}),
         tags: ['conversations'],
         summary: 'Get a conversation',
         security: [{ bearerAuth: [] }],
@@ -109,14 +85,7 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'id'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), id: z.string().uuid()}),
         tags: ['conversations'],
         summary: 'Delete a conversation',
         security: [{ bearerAuth: [] }],
@@ -130,21 +99,8 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'id'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
-        querystring: {
-          type: 'object',
-          properties: {
-            limit: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
-            cursor: { type: 'string' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), id: z.string().uuid()}),
+        querystring: z.object({limit: z.coerce.number().int().min(1).max(100).default(20), cursor: z.string().uuid().optional()}),
         tags: ['conversations'],
         summary: 'List messages in a conversation',
         security: [{ bearerAuth: [] }],
@@ -158,14 +114,7 @@ export async function conversationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'id'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), id: z.string().uuid()}),
         body: sendMessageRequest,
         tags: ['conversations'],
         summary: 'Send a message in a conversation',

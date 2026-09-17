@@ -18,7 +18,21 @@ export class RedisConnection {
       lazyConnect: true,
     })
 
-    await this.client.connect()
+    // ioredis emits connection errors separately from the connect promise.
+    // Do not print the raw error: connection details may contain credentials.
+    this.client.on('error', () => {
+      // Commands and connect() report failures to their callers.
+    })
+
+    try {
+      await this.client.connect()
+    } catch {
+      this.client.disconnect()
+      this.client = null
+      throw new Error(
+        'Redis unavailable. Check REDIS_URL and start Redis (docker compose up -d redis).',
+      )
+    }
   }
 
   async disconnect(): Promise<void> {

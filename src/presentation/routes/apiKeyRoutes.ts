@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { FastifyInstance } from 'fastify';
 import "@fastify/swagger";
 import { createAPIKeyController } from '../controllers/apiKeyController.js';
@@ -37,13 +38,7 @@ export async function apiKeyRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
         body: createAPIKeyRequest,
         tags: ['api-keys'],
         summary: 'Create an API key',
@@ -58,13 +53,7 @@ export async function apiKeyRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
         tags: ['api-keys'],
         summary: 'List API keys',
         security: [{ bearerAuth: [] }],
@@ -78,14 +67,7 @@ export async function apiKeyRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'id'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), id: z.string().uuid()}),
         tags: ['api-keys'],
         summary: 'Revoke an API key',
         security: [{ bearerAuth: [] }],

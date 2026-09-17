@@ -1,9 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
+import { jsonSchemaTransform } from '@fastify/type-provider-zod'
 
 export async function registerSwagger(fastify: FastifyInstance): Promise<void> {
   await fastify.register(swagger, {
+    transform: jsonSchemaTransform,
     openapi: {
       openapi: '3.0.0',
       info: {

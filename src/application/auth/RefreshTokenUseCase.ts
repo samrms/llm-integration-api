@@ -5,7 +5,6 @@ import { AuthenticationError } from '../../domain/errors/AppError.js'
 
 export interface RefreshTokenInput {
   refreshToken: string
-  userId: string
 }
 
 export interface RefreshTokenOutput {
@@ -53,13 +52,13 @@ export class RefreshTokenUseCase {
     expiresAt.setDate(expiresAt.getDate() + this.refreshTokenExpiresInDays)
 
     await this.refreshTokenRepo.create({
-      userId: input.userId,
+      userId: existing.userId,
       tokenHash: newTokenHash,
       family: existing.family,
       expiresAt,
     })
 
-    const user = await this.userRepo.findById(input.userId)
+    const user = await this.userRepo.findById(existing.userId)
     if (!user) {
       throw new AuthenticationError('User not found')
     }

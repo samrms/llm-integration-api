@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { FastifyInstance } from 'fastify'
 import "@fastify/swagger";
 import { createUsageController } from '../controllers/usageController.js'
@@ -36,24 +37,8 @@ export async function usageRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
-        querystring: {
-          type: 'object',
-          properties: {
-            startDate: { type: 'string', format: 'date-time' },
-            endDate: { type: 'string', format: 'date-time' },
-            provider: { type: 'string' },
-            model: { type: 'string' },
-            limit: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
-            cursor: { type: 'string' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
+        querystring: z.object({limit: z.coerce.number().int().min(1).max(100).default(20), cursor: z.string().uuid().optional(), startDate: z.string().datetime().optional(), endDate: z.string().datetime().optional(), provider: z.string().max(100).optional(), model: z.string().max(200).optional()}),
         tags: ['usage'],
         summary: 'Get usage records',
         security: [{ bearerAuth: [] }],

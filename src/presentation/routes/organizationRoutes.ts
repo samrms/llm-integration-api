@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { FastifyInstance } from 'fastify'
 import "@fastify/swagger";
 import { createOrganizationController } from '../controllers/organizationController.js'
@@ -67,13 +68,7 @@ export async function organizationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid()}),
         body: addMemberRequest,
         tags: ['organizations'],
         summary: 'Add a member to an organization',
@@ -88,14 +83,7 @@ export async function organizationRoutes(
     {
       preHandler: [authHook, orgAuthHook],
       schema: {
-        params: {
-          type: 'object',
-          required: ['organizationId', 'userId'],
-          properties: {
-            organizationId: { type: 'string', format: 'uuid' },
-            userId: { type: 'string', format: 'uuid' },
-          },
-        },
+        params: z.object({organizationId: z.string().uuid(), userId: z.string().uuid()}),
         tags: ['organizations'],
         summary: 'Remove a member from an organization',
         security: [{ bearerAuth: [] }],
