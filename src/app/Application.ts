@@ -6,6 +6,7 @@ import type { Container } from './Container.js';
 import { registerRoutes } from './Router.js';
 import { requestIdHook } from '../presentation/hooks/requestId.js';
 import { createErrorHandler } from '../presentation/hooks/errorHandler.js';
+import { registerSwagger } from '../presentation/plugins/swagger.js';
 
 export interface Application {
   start(): Promise<void>;
@@ -41,6 +42,10 @@ export function createApplication(container: Container): Application {
   let server: string | null = null;
 
   async function start(): Promise<void> {
+    // Swagger (before other plugins that modify schema)
+    await registerSwagger(fastify);
+
+    // Plugins
     await fastify.register(cors, {
       origin: container.config.CORS_ORIGINS,
       credentials: true,
@@ -55,9 +60,16 @@ export function createApplication(container: Container): Application {
       timeWindow: '1 minute',
     });
 
+    // Global hooks
     await fastify.addHook('onRequest', requestIdHook);
+
+    // Error handler
     fastify.setErrorHandler(createErrorHandler(fastify.log));
+
+    // Register routes
     await registerRoutes(fastify, container);
+
+    // Start server
     await fastify.ready();
     server = await fastify.listen({
       port: container.config.PORT,
