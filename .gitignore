@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+out/
+*.tgz
+
+# code coverage
+coverage/
+*.lcov
+
+# logs
+logs/
+*.log
+npm-debug.log*
+bun-debug.log*
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# caches
+.eslintcache
+.cache/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Drizzle
+src/infrastructure/database/migrations/meta/
+
+# Test artifacts
+test-results/
